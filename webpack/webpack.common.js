@@ -1,8 +1,8 @@
 /*
  * @Date         : 2020-03-24 11:50:37
  * @LastEditors  : HaoJie
- * @LastEditTime : 2020-03-25 00:07:03
- * @FilePath     : /webpack/webpack.common.js
+ * @LastEditTime : 2020-03-25 19:46:20
+ * @FilePath     : \webpack\webpack.common.js
  */
 const path = require("path");
 const resolve = dir => path.resolve(__dirname, "..", dir);
@@ -32,19 +32,13 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.less$/,
-        use: ["vue-style-loader", "css-loader", "less-loader"],
-        exclude: /node_modules/
-      },
-      {
         test: /\.sass$/,
         use: ["vue-style-loader", "css-loader", "sass-loader"],
         exclude: /node_modules/
       },
       {
-        test: /\.css$/,
-        loaders: ["vue-style-loader", "css-loader"],
-        exclude: /node_modules/
+        test: /\.(less|css)$/,
+        use: ["vue-style-loader", "style-loader", "css-loader", "less-loader" ]
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
@@ -102,6 +96,12 @@ module.exports = {
         options: {
           appendTsSuffixTo: [/\.vue$/]
         }
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf|otf)$/,
+        use: [
+          'file-loader'
+        ]
       }
     ]
   },
@@ -109,7 +109,7 @@ module.exports = {
     alias: {
       //确定vue的构建版本
       vue$: "vue/dist/vue.esm.js",
-      "@": resolve("src/"),
+      "@": resolve("src"),
       components: resolve("src/components/"),
       pages: resolve("src/pages/"),
       store: resolve("src/store/"),
