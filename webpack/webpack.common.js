@@ -1,14 +1,15 @@
 /*
  * @Date         : 2020-03-24 11:50:37
  * @LastEditors  : HaoJie
- * @LastEditTime : 2020-03-24 17:38:41
+ * @LastEditTime : 2020-03-25 00:07:03
  * @FilePath     : /webpack/webpack.common.js
  */
 const path = require("path");
-const resolve = dir => path.resolve(__dirname, dir);
+const resolve = dir => path.resolve(__dirname, "..", dir);
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
+const ExtractTextWebpackPlugin = require("extract-text-webpack-plugin");
 
 module.exports = {
   entry: {
@@ -19,7 +20,10 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: "src/index.html"
     }),
-    new VueLoaderPlugin()
+    new VueLoaderPlugin(),
+    new ExtractTextWebpackPlugin({
+      filename: `[name]_[md5:contenthash:hex:8].css`
+    })
   ],
   output: {
     filename: "[name].bundle.js",
@@ -39,12 +43,16 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        loaders: ["vue-style-loader", "css-loader", "postcss-loader"],
+        loaders: ["vue-style-loader", "css-loader"],
         exclude: /node_modules/
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
-        loader: "file-loader"
+        loader: "url-loader",
+        options: {
+          limit: 5000, //如果小于则以base64位显示，大于这个则以图片路径显示
+          outputPath: "images/" //让图片都打包到images文件夹下
+        }
       },
       {
         test: /\.vue$/,
@@ -57,7 +65,30 @@ module.exports = {
       },
       {
         test: /\.styl(us)?$/,
-        use: ["vue-style-loader", "css-loader", "stylus-loader"],
+        loaders: ExtractTextWebpackPlugin.extract({
+          fallback: "vue-style-loader",
+          use: [
+            {
+              loader: "css-loader?minimize",
+              options: {
+                modules: {
+                  // 重新生成的 css 类名
+                  localIdentName: "[name]__[local]--[hash:base64:5]"
+                }
+              }
+            },
+            {
+              loader: "postcss-loader",
+              options: {
+                sourceMap: true,
+                config: {
+                  path: "postcss.config.js" // 这个得在项目根目录创建此文件
+                }
+              }
+            },
+            "stylus-loader"
+          ]
+        }),
         exclude: /node_modules/
       },
       {
@@ -78,9 +109,17 @@ module.exports = {
     alias: {
       //确定vue的构建版本
       vue$: "vue/dist/vue.esm.js",
-      "@": resolve("src")
+      "@": resolve("src/"),
+      components: resolve("src/components/"),
+      pages: resolve("src/pages/"),
+      store: resolve("src/store/"),
+      style: resolve("src/style/"),
+      views: resolve("src/views")
     },
     // 将 `.ts` 添加为一个可解析的扩展名。
     extensions: [".ts", ".js"]
+  },
+  performance: {
+    hints: "warning"
   }
 };

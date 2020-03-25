@@ -1,10 +1,10 @@
 <!--
  * @Date         : 2020-03-24 12:27:01
  * @LastEditors  : HaoJie
- * @LastEditTime : 2020-03-24 17:50:56
+ * @LastEditTime : 2020-03-24 20:50:49
  * @FilePath     : /src/App.vue
  -->
-<template lang="pug" src="./pages/app.pug" />
+<template lang="pug" src="views/app.pug" />
 
 <script lang="ts">
 import {Vue, Component} from 'vue-property-decorator';
@@ -25,4 +25,4 @@ export default class MyComponent extends Vue {
 }
 </script>
 
-<style scoped lang="stylus" src="./stylus/app.styl"/>
+<style module lang="stylus" src="style/app.styl"/>
