@@ -1,8 +1,8 @@
 <!--
  * @Date         : 2020-03-24 12:27:01
  * @LastEditors  : HaoJie
- * @LastEditTime : 2020-03-24 20:50:49
- * @FilePath     : /src/App.vue
+ * @LastEditTime : 2020-03-25 19:56:00
+ * @FilePath     : \src\App.vue
  -->
 <template lang="pug" src="views/app.pug" />
 
@@ -17,6 +17,7 @@ import {Vue, Component} from 'vue-property-decorator';
 export default class MyComponent extends Vue {
   // 初始数据可以直接声明为实例的属性
   message: string = 'Hello!'
+  input:string = ''
 
   // 组件方法也可以直接声明为实例的方法
   onClick (): void {
@@ -25,4 +26,4 @@ export default class MyComponent extends Vue {
 }
 </script>
 
-<style module lang="stylus" src="style/app.styl"/>
+<style scoped lang="stylus" src="style/app.styl"/>

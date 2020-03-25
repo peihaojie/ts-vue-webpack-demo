@@ -1,12 +1,14 @@
 /*
  * @Date         : 2020-03-24 11:50:37
  * @LastEditors  : HaoJie
- * @LastEditTime : 2020-03-25 19:46:20
+ * @LastEditTime : 2020-03-25 20:52:36
  * @FilePath     : \webpack\webpack.common.js
  */
 const path = require("path");
 const resolve = dir => path.resolve(__dirname, "..", dir);
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const {
+  CleanWebpackPlugin
+} = require("clean-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
 const ExtractTextWebpackPlugin = require("extract-text-webpack-plugin");
@@ -30,15 +32,14 @@ module.exports = {
     path: path.resolve(__dirname, "..", "dist")
   },
   module: {
-    rules: [
-      {
+    rules: [{
         test: /\.sass$/,
         use: ["vue-style-loader", "css-loader", "sass-loader"],
         exclude: /node_modules/
       },
       {
         test: /\.(less|css)$/,
-        use: ["vue-style-loader", "style-loader", "css-loader", "less-loader" ]
+        use: ["vue-style-loader", "style-loader", "css-loader", "less-loader"]
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
@@ -62,15 +63,7 @@ module.exports = {
         loaders: ExtractTextWebpackPlugin.extract({
           fallback: "vue-style-loader",
           use: [
-            {
-              loader: "css-loader?minimize",
-              options: {
-                modules: {
-                  // 重新生成的 css 类名
-                  localIdentName: "[name]__[local]--[hash:base64:5]"
-                }
-              }
-            },
+            "css-loader",
             {
               loader: "postcss-loader",
               options: {
@@ -80,7 +73,15 @@ module.exports = {
                 }
               }
             },
-            "stylus-loader"
+            {
+              loader: "stylus-loader",
+              options: {
+                modules: {
+                  // 重新生成的 css 类名
+                  localIdentName: "[name]__[local]--[hash:base64:5]"
+                }
+              }
+            }
           ]
         }),
         exclude: /node_modules/
