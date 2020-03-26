@@ -1,7 +1,7 @@
 <!--
  * @Date         : 2020-03-24 12:27:01
  * @LastEditors  : HaoJie
- * @LastEditTime : 2020-03-25 19:56:00
+ * @LastEditTime : 2020-03-26 15:59:57
  * @FilePath     : \src\App.vue
  -->
 <template lang="pug" src="views/app.pug" />
@@ -18,6 +18,9 @@ export default class MyComponent extends Vue {
   // 初始数据可以直接声明为实例的属性
   message: string = 'Hello!'
   input:string = ''
+  mounted () {
+    debugger;
+  }
 
   // 组件方法也可以直接声明为实例的方法
   onClick (): void {

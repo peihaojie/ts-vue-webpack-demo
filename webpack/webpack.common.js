@@ -1,30 +1,30 @@
 /*
  * @Date         : 2020-03-24 11:50:37
  * @LastEditors  : HaoJie
- * @LastEditTime : 2020-03-25 20:52:36
+ * @LastEditTime : 2020-03-26 19:00:03
  * @FilePath     : \webpack\webpack.common.js
  */
 const path = require("path");
 const resolve = dir => path.resolve(__dirname, "..", dir);
-const {
-  CleanWebpackPlugin
-} = require("clean-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
-const ExtractTextWebpackPlugin = require("extract-text-webpack-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   entry: {
     app: "./src/main.ts"
   },
+  devtool: process.env.NODE_ENV === 'development' ? 'inline-source-map' : 'none',
   plugins: [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       template: "src/index.html"
     }),
     new VueLoaderPlugin(),
-    new ExtractTextWebpackPlugin({
-      filename: `[name]_[md5:contenthash:hex:8].css`
+    new MiniCssExtractPlugin({
+      filename: `[name]_[contenthash:8].css`,
+      chunkFilename: `[name]_[id]_[contenthash:8].css`
     })
   ],
   output: {
@@ -60,30 +60,35 @@ module.exports = {
       },
       {
         test: /\.styl(us)?$/,
-        loaders: ExtractTextWebpackPlugin.extract({
-          fallback: "vue-style-loader",
-          use: [
-            "css-loader",
-            {
-              loader: "postcss-loader",
-              options: {
-                sourceMap: true,
-                config: {
-                  path: "postcss.config.js" // 这个得在项目根目录创建此文件
-                }
-              }
-            },
-            {
-              loader: "stylus-loader",
-              options: {
-                modules: {
-                  // 重新生成的 css 类名
-                  localIdentName: "[name]__[local]--[hash:base64:5]"
-                }
+        use: [
+          {
+            loader: process.env.NODE_ENV === 'development' ? 'vue-style-loader' : MiniCssExtractPlugin.loader
+          },
+          {
+            loader: "css-loader",
+            options: {
+              sourceMap: process.env.NODE_ENV === 'development' ? true : false
+            }
+          },
+          {
+            loader: "postcss-loader",
+            options: {
+              config: {
+                path: "postcss.config.js" // 这个得在项目根目录创建此文件
               }
             }
-          ]
-        }),
+          },
+          // {
+          //   loader: "stylus-loader",
+          //   options: {
+          //     modules: {
+          //       // 重新生成的 css 类名
+          //       localIdentName: "[name]__[local]--[hash:base64:5]"
+          //     }
+          //   }
+          // }
+          "stylus-loader"
+        ],
         exclude: /node_modules/
       },
       {
@@ -100,9 +105,12 @@ module.exports = {
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/,
-        use: [
-          'file-loader'
-        ]
+        use: [{
+          loader: 'file-loader',
+          options: {
+            outputPath: "fonts/"
+          }
+        }]
       }
     ]
   },
