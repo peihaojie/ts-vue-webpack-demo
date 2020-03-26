@@ -1,7 +1,7 @@
 /*
  * @Date         : 2020-03-24 11:50:37
  * @LastEditors  : HaoJie
- * @LastEditTime : 2020-03-26 19:00:03
+ * @LastEditTime : 2020-03-26 20:24:02
  * @FilePath     : \webpack\webpack.common.js
  */
 const path = require("path");
@@ -10,6 +10,7 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const VueLoaderPlugin = require("vue-loader/lib/plugin");
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
 module.exports = {
   entry: {
@@ -19,16 +20,18 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
-      template: "src/index.html"
+      template: "src/index.html",
     }),
     new VueLoaderPlugin(),
     new MiniCssExtractPlugin({
-      filename: `[name]_[contenthash:8].css`,
-      chunkFilename: `[name]_[id]_[contenthash:8].css`
-    })
+      filename: `style/[name]_[contenthash:8].css`,
+      chunkFilename: `style/[name]_[id]_[contenthash:8].css`
+    }),
+    new OptimizeCSSAssetsPlugin({})
   ],
   output: {
-    filename: "[name].bundle.js",
+    filename: "js/[name]_[contenthash:8].js",
+    chunkFilename: `style/[name]_[id]_[contenthash:8].js`,
     path: path.resolve(__dirname, "..", "dist")
   },
   module: {
@@ -38,15 +41,19 @@ module.exports = {
         exclude: /node_modules/
       },
       {
-        test: /\.(less|css)$/,
-        use: ["vue-style-loader", "style-loader", "css-loader", "less-loader"]
+        test: /\.less$/,
+        use: ["vue-style-loader", "css-loader", "less-loader"]
       },
       {
-        test: /\.(png|svg|jpg|gif)$/,
+        test: /\.css$/,
+        use: ["vue-style-loader", "css-loader"]
+      },
+      {
+        test: /\.(png|svg|jpe?g|gif)$/,
         loader: "url-loader",
         options: {
           limit: 5000, //如果小于则以base64位显示，大于这个则以图片路径显示
-          outputPath: "images/" //让图片都打包到images文件夹下
+          name: "images/[name]_[hash:7].[ext]" //让图片都打包到images文件夹下
         }
       },
       {
@@ -62,7 +69,10 @@ module.exports = {
         test: /\.styl(us)?$/,
         use: [
           {
-            loader: process.env.NODE_ENV === 'development' ? 'vue-style-loader' : MiniCssExtractPlugin.loader
+            loader: process.env.NODE_ENV === 'development' ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: "../"
+            }
           },
           {
             loader: "css-loader",
@@ -93,7 +103,8 @@ module.exports = {
       },
       {
         test: /\.pug$/,
-        loader: "pug-plain-loader"
+        loader: "pug-plain-loader",
+        exclude: /node_modules/
       },
       {
         test: /\.tsx?$/,
@@ -108,7 +119,7 @@ module.exports = {
         use: [{
           loader: 'file-loader',
           options: {
-            outputPath: "fonts/"
+            name: 'fonts/[name]_[hash:7].[ext]'
           }
         }]
       }
@@ -119,11 +130,12 @@ module.exports = {
       //确定vue的构建版本
       vue$: "vue/dist/vue.esm.js",
       "@": resolve("src"),
-      components: resolve("src/components/"),
-      pages: resolve("src/pages/"),
-      store: resolve("src/store/"),
-      style: resolve("src/style/"),
-      views: resolve("src/views")
+      components: resolve("src/components"),
+      pages: resolve("src/pages"),
+      store: resolve("src/store"),
+      style: resolve("src/style"),
+      views: resolve("src/views"),
+      static: resolve("src/static")
     },
     // 将 `.ts` 添加为一个可解析的扩展名。
     extensions: [".ts", ".js"]
