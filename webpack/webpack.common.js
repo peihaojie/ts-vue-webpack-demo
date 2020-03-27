@@ -30,8 +30,8 @@ module.exports = {
     new OptimizeCSSAssetsPlugin({})
   ],
   output: {
-    filename: "js/[name]_[contenthash:8].js",
-    chunkFilename: `style/[name]_[id]_[contenthash:8].js`,
+    filename: "js/[name]_[hash:8].js",
+    chunkFilename: `js/[name]_[id]_[hash:8].js`,
     path: path.resolve(__dirname, "..", "dist")
   },
   module: {

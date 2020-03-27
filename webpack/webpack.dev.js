@@ -1,7 +1,7 @@
 /*
  * @Date         : 2020-03-24 11:50:48
  * @LastEditors  : HaoJie
- * @LastEditTime : 2020-03-26 20:05:51
+ * @LastEditTime : 2020-03-27 13:50:25
  * @FilePath     : \webpack\webpack.dev.js
  */
 const merge = require("webpack-merge");
@@ -14,6 +14,13 @@ module.exports = merge(common, {
     contentBase: "./dist",
     hot: true,
     host: "localhost",
-    port: "8080"
-  }
+    port: "8080",
+    overlay: {
+      warnings: true,
+      errors: true
+    }
+  },
+  performance: {
+    hints: false
+  },
 });
